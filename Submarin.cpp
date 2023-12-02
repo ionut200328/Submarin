@@ -13,10 +13,13 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 #pragma comment (lib, "glfw3dll.lib")
 #pragma comment (lib, "glew32.lib")
 #pragma comment (lib, "OpenGL32.lib")
+
+#define M_PI 3.14159265358979323846
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -46,6 +49,23 @@ enum ECameraMovementType
 	RIGHT,
 	UP,
 	DOWN
+};
+
+class Sun
+{
+public:
+	void draw(float radius, float x, float y)
+	{
+		// draw sun
+		glBegin(GL_POLYGON);
+		glColor3f(1.0f, 1.0f, 0.0f);
+		for (int i = 0; i < 360; i++)
+		{
+			float degInRad = i * 3.14159 / 180;
+			glVertex2f(cos(degInRad) * radius + x, sin(degInRad) * radius + y);
+		}
+		glEnd();
+	}
 };
 
 class Camera
@@ -398,66 +418,91 @@ double lastFrame = 0.0f;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (key == GLFW_KEY_A && action == GLFW_PRESS)
-	{
-		ambientReflection = glm::min(1.0f, ambientReflection + 0.1f); // Crește valoarea
-	}
+	//if (key == GLFW_KEY_A && action == GLFW_PRESS)
+	//{
+	//	ambientReflection = glm::min(1.0f, ambientReflection + 0.1f); // Crește valoarea
+	//}
 
-	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
-	{
-		ambientReflection = glm::max(0.0f, ambientReflection - 0.1f); // Scade valoarea
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		diffuseReflection += 0.1f; // Ajustați pasul cum doriți
-		if (diffuseReflection > 1.0f) {
-			diffuseReflection = 1.0f;
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
-		diffuseReflection -= 0.1f; // Ajustați pasul cum doriți
-		if (diffuseReflection < 0.0f) {
-			diffuseReflection = 0.0f;
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		specularReflection += 0.1f; // Ajustați pasul cum doriți
-		if (specularReflection > 1.0f) {
-			specularReflection = 1.0f;
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
-		specularReflection -= 0.1f; // Ajustați pasul cum doriți
-		if (specularReflection < 0.0f) {
-			specularReflection = 0.0f;
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-		specularExponent *= 2.0f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-		specularExponent /= 2.0f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		lampRadius += 0.1f;  // Ajustați pasul cum doriți
-	}
-	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
-		lampRadius -= 0.1f;  // Ajustați pasul cum doriți
-		if (lampRadius < 0.1f) {
-			lampRadius = 0.1f;  // Asigurați-vă că raza nu devine negativă sau prea mică
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
-		lampRadius += 0.05f;  // Ajustați pasul cum doriți
-		if (lampRadius > 10.0f)
-			lampRadius = 10.0f;  // Asigurați-vă că raza nu devine prea mare (de exemplu, 1000.0f
-	}
-	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
-		lampRadius -= 0.05f;  // Ajustați pasul cum doriți
-		if (lampRadius < 0.0f) {
-			lampRadius = 0.0f;  // Asigurați-vă că raza nu devine negativă sau prea mică
+	//if (key == GLFW_KEY_Z && action == GLFW_PRESS)
+	//{
+	//	ambientReflection = glm::max(0.0f, ambientReflection - 0.1f); // Scade valoarea
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+	//	diffuseReflection += 0.1f; // Ajustați pasul cum doriți
+	//	if (diffuseReflection > 1.0f) {
+	//		diffuseReflection = 1.0f;
+	//	}
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
+	//	diffuseReflection -= 0.1f; // Ajustați pasul cum doriți
+	//	if (diffuseReflection < 0.0f) {
+	//		diffuseReflection = 0.0f;
+	//	}
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+	//	specularReflection += 0.1f; // Ajustați pasul cum doriți
+	//	if (specularReflection > 1.0f) {
+	//		specularReflection = 1.0f;
+	//	}
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+	//	specularReflection -= 0.1f; // Ajustați pasul cum doriți
+	//	if (specularReflection < 0.0f) {
+	//		specularReflection = 0.0f;
+	//	}
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+	//	specularExponent *= 2.0f;
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+	//	if(specularExponent > 1.0f)
+	//		specularExponent /= 2.0f;
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+	//	lampRadius += 0.05f;  // Ajustați pasul cum doriți
+	//	if (lampRadius > 10.0f)
+	//		lampRadius = 10.0f;  // Asigurați-vă că raza nu devine prea mare (de exemplu, 1000.0f
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
+	//	lampRadius -= 0.05f;  // Ajustați pasul cum doriți
+	//	if (lampRadius < 0.0f) {
+	//		lampRadius = 0.0f;  // Asigurați-vă că raza nu devine negativă sau prea mică
+	//	}
+	//}
+}
+
+void generateSphere(std::vector<GLfloat>& vertices, std::vector<GLuint>& indices, float radius, int sectors, int stacks) {
+	for (int i = 0; i <= stacks; ++i) {
+		float stackAngle = static_cast<float>(M_PI / 2 - i * M_PI / stacks);
+		float y = radius * sin(stackAngle);
+
+		for (int j = 0; j <= sectors; ++j) {
+			float sectorAngle = static_cast<float>(j * 2 * M_PI / sectors);
+			float x = radius * cos(stackAngle) * cos(sectorAngle);
+			float z = radius * cos(stackAngle) * sin(sectorAngle);
+
+			vertices.push_back(x);
+			vertices.push_back(y);
+			vertices.push_back(z);
+
+			// Texture coordinates and normals can be added here if needed
+
+			if (i < stacks && j < sectors) {
+				int currentRow = i * (sectors + 1);
+				int nextRow = (i + 1) * (sectors + 1);
+
+				indices.push_back(currentRow + j);
+				indices.push_back(nextRow + j);
+				indices.push_back(nextRow + j + 1);
+
+				indices.push_back(currentRow + j);
+				indices.push_back(nextRow + j + 1);
+				indices.push_back(currentRow + j + 1);
+			}
 		}
 	}
 }
+
 
 int main()
 {
@@ -532,6 +577,10 @@ int main()
 	   -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
 	   -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 	};
+
+
+
+
 	// first, configure the cube's VAO (and VBO)
 	unsigned int VBO, cubeVAO;
 	glGenVertexArrays(1, &cubeVAO);
@@ -559,13 +608,46 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
+
+
+
 	// Create camera
 	pCamera = new Camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0, 0.0, 3.0));
 
 	glm::vec3 lightPos(0.0f, 0.0f, 2.0f);
+	glm::vec3 sunPos(0.0f, 2.0f, 0.0f);
 
 	Shader lightingShader("PhongLight.vs", "PhongLight.fs");
 	Shader lampShader("Lamp.vs", "Lamp.fs");
+	Shader sunShader("Sun.vs", "Sun.fs");
+
+	unsigned int sunVAO, sunVBO, sunEBO;
+	glGenVertexArrays(1, &sunVAO);
+	glGenBuffers(1, &sunVBO);
+	glGenBuffers(1, &sunEBO);
+
+	glBindVertexArray(sunVAO);
+
+	std::vector<GLfloat> sunVertices;
+	std::vector<GLuint> sunIndices;
+	float sunRadius = 0.5f;
+	int sunSectors = 30;
+	int sunStacks = 30;
+	generateSphere(sunVertices, sunIndices, sunRadius, sunSectors, sunStacks);
+
+	glBindBuffer(GL_ARRAY_BUFFER, sunVBO);
+	glBufferData(GL_ARRAY_BUFFER, sunVertices.size() * sizeof(GLfloat), &sunVertices[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sunEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sunIndices.size() * sizeof(GLuint), &sunIndices[0], GL_STATIC_DRAW);
+
+	//specify vertex position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0); // Unbind VBO
+	glBindVertexArray(0);
+
 
 	// render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -589,6 +671,10 @@ int main()
 		float lampY = sin(lampAngle) * lampRadius;
 		lightPos = glm::vec3(lampX, lampY, 2.0f); // Actualizați poziția luminii
 
+		// Calculați poziția soarelui în funcție de unghiul curent și raza cercului
+		float sunX = cos(lampAngle) * lampRadius;
+		float sunY = sin(lampAngle) * lampRadius;
+		//sunPos = glm::vec3(sunX, sunY, 2.0f); // Actualizați poziția soarelui
 
 		lightingShader.Use();
 
@@ -606,7 +692,7 @@ int main()
 		lightingShader.SetMat4("projection", pCamera->GetProjectionMatrix());
 		lightingShader.SetMat4("view", pCamera->GetViewMatrix());
 
-		glm::mat4 model = glm::scale(glm::mat4(1.0), glm::vec3(3.0f));
+		glm::mat4  model = glm::scale(glm::mat4(1.0), glm::vec3(3.0f));
 		lightingShader.SetMat4("model", model);
 
 		// render the cube
@@ -625,6 +711,21 @@ int main()
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
+
+		// draw sun
+		sunShader.Use();
+		sunShader.SetMat4("projection", pCamera->GetProjectionMatrix());
+		sunShader.SetMat4("view", pCamera->GetViewMatrix());
+		model = glm::translate(glm::mat4(1.0), sunPos);  // Use sunPos for the sun's position
+		model = glm::scale(model, glm::vec3(1.0f));  // Adjust the scale as needed
+		sunShader.SetMat4("model", model);
+
+		glBindVertexArray(sunVAO);
+		glDrawElements(GL_TRIANGLES, sunIndices.size(), GL_UNSIGNED_INT, 0);
+
+		glBindVertexArray(0);
+
+
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -635,6 +736,10 @@ int main()
 	glDeleteVertexArrays(1, &cubeVAO);
 	glDeleteVertexArrays(1, &lightVAO);
 	glDeleteBuffers(1, &VBO);
+
+	glDeleteVertexArrays(1, &sunVAO);
+	glDeleteBuffers(1, &sunVBO);
+	glDeleteBuffers(1, &sunEBO);
 
 	// glfw: terminate, clearing all previously allocated GLFW resources
 	glfwTerminate();

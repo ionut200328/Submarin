@@ -18,6 +18,9 @@
     <ClCompile Include="Submarin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sun.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Sun.vs">
@@ -32,5 +35,16 @@
     <None Include="PhongLight.fs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="Lamp.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Lamp.vs">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sun.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

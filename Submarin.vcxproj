@@ -136,12 +136,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Submarin.cpp" />
+    <ClCompile Include="Sun.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Lamp.fs" />
+    <None Include="Lamp.vs" />
     <None Include="PhongLight.fs" />
     <None Include="PhongLight.vs" />
     <None Include="Sun.fs" />
     <None Include="Sun.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sun.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
