@@ -38,6 +38,11 @@ float lampRadius = 1.0f;  // Raza inițială a cercului
 float lampRotationSpeed = 1.0f;  // Viteza de rotație a lămpii
 float lampAngle = 0.0f; // Unghiul curent al luminii
 
+// Raza inițială a cercului pentru soare
+float Radius = 10.0f;  // Raza inițială a cercului
+float sunRotationSpeed = 5.0f;  // Viteza de rotație a soarelui
+float sunAngle = 0.0f; // Unghiul curent al soarelui
+
 
 
 enum ECameraMovementType
@@ -664,6 +669,8 @@ int main()
 
 		// Actualizați unghiul în mod continuu
 		lampAngle += lampRotationSpeed * deltaTime;
+		if (lampAngle > 360.0f)
+			lampAngle = 0.0f;
 
 
 		// Calculați poziția luminii în funcție de unghiul curent și raza cercului
@@ -671,10 +678,6 @@ int main()
 		float lampY = sin(lampAngle) * lampRadius;
 		lightPos = glm::vec3(lampX, lampY, 2.0f); // Actualizați poziția luminii
 
-		// Calculați poziția soarelui în funcție de unghiul curent și raza cercului
-		float sunX = cos(lampAngle) * lampRadius;
-		float sunY = sin(lampAngle) * lampRadius;
-		//sunPos = glm::vec3(sunX, sunY, 2.0f); // Actualizați poziția soarelui
 
 		lightingShader.Use();
 
@@ -713,17 +716,32 @@ int main()
 
 
 		// draw sun
-		sunShader.Use();
-		sunShader.SetMat4("projection", pCamera->GetProjectionMatrix());
-		sunShader.SetMat4("view", pCamera->GetViewMatrix());
-		model = glm::translate(glm::mat4(1.0), sunPos);  // Use sunPos for the sun's position
-		model = glm::scale(model, glm::vec3(1.0f));  // Adjust the scale as needed
-		sunShader.SetMat4("model", model);
 
-		glBindVertexArray(sunVAO);
-		glDrawElements(GL_TRIANGLES, sunIndices.size(), GL_UNSIGNED_INT, 0);
+		sunAngle += sunRotationSpeed * deltaTime;
 
-		glBindVertexArray(0);
+		if (sunAngle > 360.0f)
+			sunAngle = 0.0f;
+
+			
+		int sunX = cos(sunAngle) * Radius;
+		int sunY = sin(sunAngle) * Radius;
+
+		if(sunY >= 0)
+		{
+			sunPos = glm::vec3(sunX, sunY, 2.0f); // Actualizați poziția soarelui
+
+			sunShader.Use();
+			sunShader.SetMat4("projection", pCamera->GetProjectionMatrix());
+			sunShader.SetMat4("view", pCamera->GetViewMatrix());
+			model = glm::translate(glm::mat4(1.0), sunPos);  // Use sunPos for the sun's position
+			model = glm::scale(model, glm::vec3(1.0f));  // Adjust the scale as needed
+			sunShader.SetMat4("model", model);
+
+			glBindVertexArray(sunVAO);
+			glDrawElements(GL_TRIANGLES, sunIndices.size(), GL_UNSIGNED_INT, 0);
+
+			glBindVertexArray(0);
+		}
 
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -772,6 +790,8 @@ void processInput(GLFWwindow* window)
 
 	}
 }
+
+
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
