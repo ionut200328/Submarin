@@ -492,7 +492,15 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	{
 		diffuseReflection = glm::max(0.0f, diffuseReflection - 0.1f); // Scade valoarea diffuseReflection cu 0.1
 	}
+	if (key == GLFW_KEY_X && action == GLFW_PRESS)
+	{
+		specularReflection = glm::min(1.0f, specularReflection + 0.1f); // Crește valoarea specularReflection cu 0.1
+	}
 
+	if (key == GLFW_KEY_C && action == GLFW_PRESS)
+	{
+		specularReflection = glm::max(0.0f, specularReflection - 0.1f); // Scade valoarea specularReflection cu 0.1
+	}
 }
 
 void generateSphere(std::vector<GLfloat>& vertices, std::vector<GLuint>& indices, float radius, int sectors, int stacks) {
