@@ -474,6 +474,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	//		lampRadius = 0.0f;  // Asigurați-vă că raza nu devine negativă sau prea mică
 	//	}
 	//}
+	if (key == GLFW_KEY_W && action == GLFW_PRESS)
+	{
+		ambientReflection = glm::min(1.0f, ambientReflection + 0.1f); // Crește valoarea ambientReflection cu 0.1
+	}
+
+	
 }
 
 void generateSphere(std::vector<GLfloat>& vertices, std::vector<GLuint>& indices, float radius, int sectors, int stacks) {
@@ -653,7 +659,7 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Unbind VBO
 	glBindVertexArray(0);
 
-
+	glfwSetKeyCallback(window, key_callback); //aaaaaaaaaaaaaaaaaaaa
 	// render loop
 	while (!glfwWindowShouldClose(window)) {
 		// per-frame time logic
@@ -763,6 +769,7 @@ int main()
 	glfwTerminate();
 	return 0;
 }
+
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 void processInput(GLFWwindow* window)
