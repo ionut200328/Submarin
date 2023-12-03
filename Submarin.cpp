@@ -721,7 +721,7 @@ int main()
 		lightingShader.Use();
 
 
-		lightingShader.SetVec3("objectColor", 0.5f, 1.0f, 0.31f);
+		lightingShader.SetVec3("objectColor", red, green, blue);
 		lightingShader.SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		lightingShader.SetVec3("lightPos", lightPos);
 		lightingShader.SetVec3("viewPos", pCamera->GetPosition());
@@ -807,6 +807,13 @@ int main()
 	return 0;
 }
 
+float randomColor()
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int>dis(0, 255);
+	return dis(gen) / 255.0f;
+}
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 void processInput(GLFWwindow* window)
@@ -830,7 +837,7 @@ void processInput(GLFWwindow* window)
 		rotatie = !rotatie;
 	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
 	{
-		red = random();
+		red = randomColor();
 		blue = 0.31f;
 		green = 1.0f;
 	}
@@ -838,14 +845,27 @@ void processInput(GLFWwindow* window)
 	{
 		red = 0.5f;
 		blue = 0.31f;
-		green = random();
+		green = randomColor();
 	}
 	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
 	{
 		red = 0.5f;
-		blue = random();
+		blue = randomColor();
 		green = 1.0f;
 	}
+	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+	{
+		red = randomColor();
+		blue = randomColor();
+		green = randomColor();
+	}
+	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+	{
+		red = 0.5f;
+		blue = 0.31f;
+		green = 1.0f;
+	}
+
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
 		int width, height;
 		glfwGetWindowSize(window, &width, &height);
@@ -873,11 +893,4 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 void scroll_callback(GLFWwindow* window, double xoffset, double yOffset)
 {
 	pCamera->ProcessMouseScroll((float)yOffset);
-}
-float random()
-{
-	std::random_device rd;
-	std::mt19937 gen(rd);
-	std::uniform_int_distribution<int>dis(0, 255);
-	return dis(gen) / 255.0f;
 }
