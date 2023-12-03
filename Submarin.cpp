@@ -535,6 +535,7 @@ void generateSphere(std::vector<GLfloat>& vertices, std::vector<GLuint>& indices
 	}
 }
 
+bool rotatie;
 
 int main()
 {
@@ -682,6 +683,7 @@ int main()
 
 	glfwSetKeyCallback(window, key_callback); //aaaaaaaaaaaaaaaaaaaa
 	// render loop
+	glm::vec3 cubePosition(0.0f, 0.0f, 0.0f);
 	while (!glfwWindowShouldClose(window)) {
 		// per-frame time logic
 		double currentFrame = glfwGetTime();
@@ -695,9 +697,18 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Actualizați unghiul în mod continuu
-		lampAngle += lampRotationSpeed * deltaTime;
-		if (lampAngle > 360.0f)
-			lampAngle = 0.0f;
+		if (rotatie)
+		{
+			lampAngle += lampRotationSpeed * deltaTime;
+			if (lampAngle > 360.0f)
+				lampAngle = 0.0f;
+		}
+		else
+		{
+			lampAngle -= lampRotationSpeed * deltaTime;
+			if (lampAngle < 0.0f)
+				lampAngle = 360.0f;
+		}
 
 
 		// Calculați poziția luminii în funcție de unghiul curent și raza cercului
@@ -745,30 +756,26 @@ int main()
 		// draw sun
 
 		sunAngle += sunRotationSpeed * deltaTime;
-
 		if (sunAngle > 360.0f)
 			sunAngle = 0.0f;
 
-			
 		int sunX = cos(sunAngle) * Radius;
 		int sunY = sin(sunAngle) * Radius;
+		std::cout << sunAngle <<"  "<<rotatie<<"\n";
 
-		if(sunY >= 0)
-		{
-			sunPos = glm::vec3(sunX, sunY, 2.0f); // Actualizați poziția soarelui
+		sunPos = glm::vec3(sunX, sunY, 2.0f); // Actualizați poziția soarelui
 
-			sunShader.Use();
-			sunShader.SetMat4("projection", pCamera->GetProjectionMatrix());
-			sunShader.SetMat4("view", pCamera->GetViewMatrix());
-			model = glm::translate(glm::mat4(1.0), sunPos);  // Use sunPos for the sun's position
-			model = glm::scale(model, glm::vec3(1.0f));  // Adjust the scale as needed
-			sunShader.SetMat4("model", model);
+		sunShader.Use();
+		sunShader.SetMat4("projection", pCamera->GetProjectionMatrix());
+		sunShader.SetMat4("view", pCamera->GetViewMatrix());
+		model = glm::translate(glm::mat4(1.0), sunPos);  // Use sunPos for the sun's position
+		model = glm::scale(model, glm::vec3(1.0f));  // Adjust the scale as needed
+		sunShader.SetMat4("model", model);
 
-			glBindVertexArray(sunVAO);
-			glDrawElements(GL_TRIANGLES, sunIndices.size(), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(sunVAO);
+		glDrawElements(GL_TRIANGLES, sunIndices.size(), GL_UNSIGNED_INT, 0);
 
-			glBindVertexArray(0);
-		}
+		glBindVertexArray(0);
 
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -810,6 +817,8 @@ void processInput(GLFWwindow* window)
 		pCamera->ProcessKeyboard(UP, (float)deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
 		pCamera->ProcessKeyboard(DOWN, (float)deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+		rotatie = !rotatie;
 
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
 		int width, height;
