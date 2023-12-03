@@ -1,7 +1,6 @@
 ﻿#include <stdlib.h> // necesare pentru citirea shader-elor
 #include <stdio.h>
 #include <math.h> 
-
 #include <GL/glew.h>
 
 #include <GLM.hpp>
@@ -535,6 +534,7 @@ void generateSphere(std::vector<GLfloat>& vertices, std::vector<GLuint>& indices
 	}
 }
 
+int sunX, sunY;
 bool rotatie;
 
 int main()
@@ -755,12 +755,20 @@ int main()
 
 		// draw sun
 
-		sunAngle += sunRotationSpeed * deltaTime;
-		if (sunAngle > 360.0f)
-			sunAngle = 0.0f;
-
-		int sunX = cos(sunAngle) * Radius;
-		int sunY = sin(sunAngle) * Radius;
+		if (rotatie)
+		{
+			sunAngle += sunRotationSpeed * deltaTime;
+			if (sunAngle > 360.0f)
+				sunAngle = 0.0f;
+		}
+		else
+		{
+			sunAngle -= sunRotationSpeed * deltaTime;
+			if (sunAngle < 0.0f)
+				sunAngle = 360.0f;
+		}
+		sunX = cos(sunAngle) * Radius;
+		sunY = sin(sunAngle) * Radius;
 		std::cout << sunAngle <<"  "<<rotatie<<"\n";
 
 		sunPos = glm::vec3(sunX, sunY, 2.0f); // Actualizați poziția soarelui
