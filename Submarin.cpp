@@ -1,6 +1,7 @@
 ﻿#include <stdlib.h> // necesare pentru citirea shader-elor
 #include <stdio.h>
 #include <math.h> 
+#include <random>
 #include <GL/glew.h>
 
 #include <GLM.hpp>
@@ -536,7 +537,7 @@ void generateSphere(std::vector<GLfloat>& vertices, std::vector<GLuint>& indices
 
 int sunX, sunY;
 bool rotatie;
-
+float red, green, blue;
 int main()
 {
 	// glfw: initialize and configure
@@ -825,9 +826,26 @@ void processInput(GLFWwindow* window)
 		pCamera->ProcessKeyboard(UP, (float)deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
 		pCamera->ProcessKeyboard(DOWN, (float)deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
 		rotatie = !rotatie;
-
+	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+	{
+		red = random();
+		blue = 0.31f;
+		green = 1.0f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+	{
+		red = 0.5f;
+		blue = 0.31f;
+		green = random();
+	}
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+	{
+		red = 0.5f;
+		blue = random();
+		green = 1.0f;
+	}
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
 		int width, height;
 		glfwGetWindowSize(window, &width, &height);
@@ -855,4 +873,11 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 void scroll_callback(GLFWwindow* window, double xoffset, double yOffset)
 {
 	pCamera->ProcessMouseScroll((float)yOffset);
+}
+float random()
+{
+	std::random_device rd;
+	std::mt19937 gen(rd);
+	std::uniform_int_distribution<int>dis(0, 255);
+	return dis(gen) / 255.0f;
 }
