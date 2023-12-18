@@ -1,0 +1,10 @@
+﻿  Submarin.cpp
+D:\##Facultate\Anul 2\G3d\Submarin\Submarin.cpp(69,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\##Facultate\Anul 2\G3d\Submarin\Submarin.cpp(703,35): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+D:\##Facultate\Anul 2\G3d\Submarin\Submarin.cpp(709,35): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+D:\##Facultate\Anul 2\G3d\Submarin\Submarin.cpp(761,33): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+D:\##Facultate\Anul 2\G3d\Submarin\Submarin.cpp(767,33): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+D:\##Facultate\Anul 2\G3d\Submarin\Submarin.cpp(771,24): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\##Facultate\Anul 2\G3d\Submarin\Submarin.cpp(772,24): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\##Facultate\Anul 2\G3d\Submarin\Submarin.cpp(785,47): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  Submarin.vcxproj -> D:\##Facultate\Anul 2\G3d\Submarin\x64\Debug\Submarin.exe

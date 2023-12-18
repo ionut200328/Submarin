@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <math.h> 
 #include <random>
-#include <GL/glew.h>
+#include <glew.h>
 
 #include <GLM.hpp>
 #include <gtc/matrix_transform.hpp>
