@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\##Facultate\Anul 2\G3d\Includes\assimp;D:\##Facultate\Anul 2\G3d\Includes\GLFW;D:\##Facultate\Anul 2\G3d\Includes\GL;D:\##Facultate\Anul 2\G3d\Includes\glm;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\##Facultate\Anul 2\G3d\Libraries;E:\AN II Sem 1\OpenGL library\glfw-3.3.4.bin.WIN32\lib-vc2019;E:\AN II Sem 1\OpenGL library\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>Includes;$(IncludePath)</IncludePath>
+    <LibraryPath>Libraries;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>E:\AN II Sem 1\OpenGL library\glfw-3.3.4.bin.WIN32\include\GLFW;E:\AN II Sem 1\OpenGL library\glm-stable\glm;E:\AN II Sem 1\OpenGL library\glew-2.1.0\include;$(IncludePath)</IncludePath>
