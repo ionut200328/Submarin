@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>Includes;$(IncludePath)</IncludePath>
-    <LibraryPath>Libraries;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\AN II Sem 1\OpenGL library\glfw-3.3.4.bin.WIN32\include\GLFW;E:\AN II Sem 1\OpenGL library\glm-stable\glm;E:\AN II Sem 1\OpenGL library\glew-2.1.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\AN II Sem 1\OpenGL library\glfw-3.3.4.bin.WIN32\lib-vc2019;E:\AN II Sem 1\OpenGL library\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\##FACULTATE\Anul 2 Semestru 1\G3D\Submarin\Includes\assimp;C:\##FACULTATE\Anul 2 Semestru 1\G3D\glfw-3.3.4.bin.WIN32\include\GLFW;C:\##FACULTATE\Anul 2 Semestru 1\G3D\glm-stable\glm;C:\##FACULTATE\Anul 2 Semestru 1\G3D\glew-2.1.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\##FACULTATE\Anul 2 Semestru 1\G3D\Submarin\Libraries;C:\##FACULTATE\Anul 2 Semestru 1\G3D\glfw-3.3.4.bin.WIN32\lib-vc2019;C:\##FACULTATE\Anul 2 Semestru 1\G3D\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\AN II Sem 1\OpenGL library\glfw-3.3.4.bin.WIN32\include\GLFW;E:\AN II Sem 1\OpenGL library\glm-stable\glm;E:\AN II Sem 1\OpenGL library\glew-2.1.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\AN II Sem 1\OpenGL library\glfw-3.3.4.bin.WIN32\lib-vc2019;E:\AN II Sem 1\OpenGL library\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -88,7 +88,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -113,12 +112,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -138,7 +135,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Submarin.cpp" />
     <ClCompile Include="Sun.cpp" />
   </ItemGroup>
@@ -151,7 +147,6 @@
     <None Include="Sun.vs" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Submarin.h" />
     <ClInclude Include="Sun.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
