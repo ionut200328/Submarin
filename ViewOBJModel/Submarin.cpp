@@ -312,7 +312,99 @@ Texture loadTexture(const char* path) {
 	stbi_image_free(data);
 	return texture;
 }
+GLuint loadCubemap(std::vector<std::string> faces) {
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
+	int width, height, nrChannels;
+	for (GLuint i = 0; i < faces.size(); ++i) {
+		unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+		if (data) {
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+				0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+			);
+			stbi_image_free(data);
+		}
+		else {
+			std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+			stbi_image_free(data);
+		}
+	}
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	return textureID;
+}
+void initializeQuad(GLuint& skyboxVAO, GLuint& skyboxVBO) {
+	// Vertices for a quad (two triangles)
+	float skyboxVertices[] = {
+		// Positions           
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
+	};
+
+	glGenVertexArrays(1, &skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
+
+	// Bind VAO, VBO
+	glBindVertexArray(skyboxVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+
+	// Set buffer data
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+
+	// Set vertex attribute pointers
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// Unbind VAO, VBO
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
 int main()
 {
 	// glfw: initialize and configure
@@ -413,6 +505,8 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
+	GLuint waterVAO, waterVBO;
+	initializeQuad(waterVAO, waterVBO);
 	// Create camera
 	pCamera = new Camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0, 0.0, 3.0));
 
@@ -429,6 +523,9 @@ int main()
 
 	Shader lightingShader((currentPath + "\\Shaders\\PhongLight.vs").c_str(), (currentPath + "\\Shaders\\PhongLight.fs").c_str());
 	Shader lampShader((currentPath + "\\Shaders\\Lamp.vs").c_str(), (currentPath + "\\Shaders\\Lamp.fs").c_str());
+	/*Shader shadowMappingShader((currentPath + "\\Shaders\\ShadowM.vs").c_str(), (currentPath + "\\Shaders\\PhongLight.fs").c_str());
+	Shader shadowMappingDepthShader("ShadowMappingDepth.vs", "ShadowMappingDepth.fs");*/
+	Shader waterShader((currentPath + "\\Shaders\\water.vs").c_str(), (currentPath + "\\Shaders\\water.fs").c_str());
 
 	std::string objFileName = (currentPath + "\\Models\\CylinderProject.obj");
 	Model objModel(objFileName, false);
@@ -446,6 +543,15 @@ int main()
 		currentPath + "\\Models\\Submarin\\Normal_map.png",
 		currentPath + "\\Models\\Submarin\\Roughness_map.png"
 	};
+	std::vector<std::string> skyboxFaces = {
+		currentPath + "\\Models\\Water\\Underwater Box_Front.jpg",
+		currentPath + "\\Models\\Water\\Underwater Box_Back.jpg",
+		currentPath + "\\Models\\Water\\Underwater Box_Right.jpg",
+		currentPath + "\\Models\\Water\\Underwater Box_Left.jpg",
+		currentPath + "\\Models\\Water\\Underwater Box_Top.jpg",
+		currentPath + "\\Models\\Water\\Underwater Box_Bottom.jpg"
+	};
+	GLuint cubemapTexture = loadCubemap(skyboxFaces);
 	for (const auto& path : texturePaths) {
 		Texture texture = loadTexture(path.c_str());
 		textures.push_back(texture);
@@ -475,7 +581,7 @@ int main()
 		lightingShader.setMat4("view", pCamera->GetViewMatrix());
 
 		// Pass texture coordinates if the shader supports it
-		lightingShader.setBool("useTexture", true);  // Add this uniform in your shader
+		lightingShader.setBool("useTexture", true);
 
 		// render the model
 		glm::mat4 submarinModel = glm::scale(glm::mat4(1.0), glm::vec3(.5f));
@@ -487,13 +593,13 @@ int main()
 
 		std::string uniformName = "texture1";
 		lightingShader.setInt(uniformName.c_str(), 0);
-		 uniformName = "texture2";
+		uniformName = "texture2";
 		lightingShader.setInt(uniformName.c_str(), 1);
-		 uniformName = "texture3";
+		uniformName = "texture3";
 		lightingShader.setInt(uniformName.c_str(), 2);
-		 uniformName = "texture4";
+		uniformName = "texture4";
 		lightingShader.setInt(uniformName.c_str(), 3);
-		 uniformName = "texture5";
+		uniformName = "texture5";
 		lightingShader.setInt(uniformName.c_str(), 4);
 
 		// Bind your texture here (you need to load and bind the texture)
@@ -515,6 +621,27 @@ int main()
 
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		//draw the water 
+		glDepthFunc(GL_LEQUAL);  // Ensure skybox is drawn behind everything
+		waterShader.use();
+		waterShader.setMat4("projection", pCamera->GetProjectionMatrix());
+		waterShader.setMat4("view", glm::mat4(glm::mat3(pCamera->GetViewMatrix())));  // Remove translation part of the view matrix
+
+		glBindVertexArray(waterVAO);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+
+		glDepthFunc(GL_LESS);  // Reset depth function
+
+
+		// Render the quad
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		// Unbind the VAO
+		glBindVertexArray(0);
+
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		glfwSwapBuffers(window);
