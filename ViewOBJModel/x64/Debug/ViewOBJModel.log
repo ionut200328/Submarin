@@ -1,2 +1,19 @@
-﻿  Model.cpp
-  ViewOBJModel.vcxproj -> C:\Users\chitu\Downloads\Submarin\ViewOBJModel\x64\Debug\ViewOBJModel.exe
+﻿C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (ViewOBJModel.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  Mesh.cpp
+E:\Submarin\ViewOBJModel\Mesh.cpp(8,31): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+E:\Submarin\ViewOBJModel\Mesh.cpp(17,29): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+  Model.cpp
+  Shader.cpp
+  Submarin.cpp
+E:\Submarin\ViewOBJModel\Submarin.cpp(465,20): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+E:\Submarin\ViewOBJModel\Submarin.cpp(465,20): warning C4244:         with
+E:\Submarin\ViewOBJModel\Submarin.cpp(465,20): warning C4244:         [
+E:\Submarin\ViewOBJModel\Submarin.cpp(465,20): warning C4244:             T=float
+E:\Submarin\ViewOBJModel\Submarin.cpp(465,20): warning C4244:         ]
+E:\Submarin\ViewOBJModel\Submarin.cpp(466,20): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+E:\Submarin\ViewOBJModel\Submarin.cpp(466,20): warning C4244:         with
+E:\Submarin\ViewOBJModel\Submarin.cpp(466,20): warning C4244:         [
+E:\Submarin\ViewOBJModel\Submarin.cpp(466,20): warning C4244:             T=float
+E:\Submarin\ViewOBJModel\Submarin.cpp(466,20): warning C4244:         ]
+  Generating Code...
+  ViewOBJModel.vcxproj -> E:\Submarin\x64\Debug\Submarin.exe
