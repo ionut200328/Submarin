@@ -50,7 +50,7 @@ class Camera
 private:
 	// Default camera values
 	const float zNEAR = 0.1f;
-	const float zFAR = 500.f;
+	const float zFAR = 1500.f;
 	const float YAW = -90.0f;
 	const float PITCH = 0.0f;
 	const float FOV = 45.0f;
@@ -341,50 +341,54 @@ GLuint loadCubemap(std::vector<std::string> faces) {
 	return textureID;
 }
 void initializeQuad(GLuint& skyboxVAO, GLuint& skyboxVBO) {
-	// Vertices for a quad (two triangles)
 	float skyboxVertices[] = {
 		// Positions           
-		-1.0f,  1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f, 1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
 
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
+	// Left Face
+	-1.0f, -1.0f, 1.0f,
+	-1.0f, -1.0f, -1.0f,
+	-1.0f, 1.0f, -1.0f,
+	-1.0f, 1.0f, -1.0f,
+	-1.0f, 1.0f, 1.0f,
+	-1.0f, -1.0f, 1.0f,
 
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
+	// Top Face
+	-1.0f, 1.0f, -1.0f,
+	1.0f, 1.0f, -1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	-1.0f, 1.0f, 1.0f,
+	-1.0f, 1.0f, -1.0f,
 
-		-1.0f, -1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
+	// Bottom Face
+	-1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f, 1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f, 1.0f,
+	1.0f, -1.0f, 1.0f,
 
-		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f, -1.0f,
+	// Back Face
+	-1.0f, 1.0f, -1.0f,
+	-1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f, 1.0f, -1.0f,
+	-1.0f, 1.0f, -1.0f,
 
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f
+	// Front Face
+	-1.0f, -1.0f, 1.0f,
+	-1.0f, 1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f, -1.0f, 1.0f,
+	-1.0f, -1.0f, 1.0f
 	};
 
 	glGenVertexArrays(1, &skyboxVAO);
@@ -508,6 +512,9 @@ int main()
 	GLuint waterVAO, waterVBO;
 	initializeQuad(waterVAO, waterVBO);
 	// Create camera
+	float nearPlane = 0.1f;  
+	float farPlane = 100.0f;  
+
 	pCamera = new Camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0, 0.0, 3.0));
 
 	glm::vec3 lightPos(0.0f, 2.0f, 1.0f);
@@ -544,12 +551,12 @@ int main()
 		currentPath + "\\Models\\Submarin\\Roughness_map.png"
 	};
 	std::vector<std::string> skyboxFaces = {
-		currentPath + "\\Models\\Water\\Underwater Box_Front.jpg",
-		currentPath + "\\Models\\Water\\Underwater Box_Back.jpg",
 		currentPath + "\\Models\\Water\\Underwater Box_Right.jpg",
 		currentPath + "\\Models\\Water\\Underwater Box_Left.jpg",
 		currentPath + "\\Models\\Water\\Underwater Box_Top.jpg",
-		currentPath + "\\Models\\Water\\Underwater Box_Bottom.jpg"
+		currentPath + "\\Models\\Water\\Underwater Box_Bottom.jpg",
+		currentPath + "\\Models\\Water\\Underwater Box_Back.jpg",
+		currentPath + "\\Models\\Water\\Underwater Box_Front.jpg"
 	};
 	GLuint cubemapTexture = loadCubemap(skyboxFaces);
 	for (const auto& path : texturePaths) {
@@ -558,6 +565,7 @@ int main()
 	}
 	while (!glfwWindowShouldClose(window)) {
 		// per-frame time logic
+		glEnable(GL_DEPTH_TEST);
 		double currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
@@ -588,7 +596,7 @@ int main()
 
 		submarinModel = glm::translate(submarinModel, submarinePosition);
 		submarinModel = glm::rotate(submarinModel, glm::radians(submarineRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-
+		submarinModel= glm::scale(submarinModel, glm::vec3(0.1f));
 		lightingShader.setMat4("model", submarinModel);
 
 		std::string uniformName = "texture1";
@@ -608,7 +616,6 @@ int main()
 			glActiveTexture(GL_TEXTURE0 + i);  // Activate texture unit GL_TEXTURE0 + i
 			glBindTexture(GL_TEXTURE_2D, textures[i].id);
 		}
-
 		submarinObjModel.Draw(lightingShader);
 
 		// also draw the lamp object
