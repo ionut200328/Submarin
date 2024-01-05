@@ -31,7 +31,7 @@
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-float ambientReflection = 0.1f;
+float ambientReflection = 10.0f;
 float diffuseReflection = 0.5f;
 float specularReflection = 0.5f;
 int specularExponent = 2;
@@ -298,45 +298,45 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	{
 		followSubmarine = true;
 	}
-	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
-	{
-		ambientReflection = glm::min(1.0f, ambientReflection + 0.1f); // Crește valoarea
-	}
+	//if (key == GLFW_KEY_Z && action == GLFW_PRESS)
+	//{
+	//	ambientReflection = glm::min(1.0f, ambientReflection + 0.1f); // Crește valoarea
+	//}
 
-	if (key == GLFW_KEY_X && action == GLFW_PRESS)
-	{
-		ambientReflection = glm::max(0.0f, ambientReflection - 0.1f); // Scade valoarea
-	}
-	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
-		diffuseReflection += 0.1f; // Ajustați pasul cum doriți
-		if (diffuseReflection > 1.0f) {
-			diffuseReflection = 1.0f;
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
-		diffuseReflection -= 0.1f; // Ajustați pasul cum doriți
-		if (diffuseReflection < 0.0f) {
-			diffuseReflection = 0.0f;
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-		specularReflection += 0.1f; // Ajustați pasul cum doriți
-		if (specularReflection > 1.0f) {
-			specularReflection = 1.0f;
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
-		specularReflection -= 0.1f; // Ajustați pasul cum doriți
-		if (specularReflection < 0.0f) {
-			specularReflection = 0.0f;
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
-		specularExponent *= 2.0f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS) {
-		specularExponent /= 2.0f;
-	}
+	//if (key == GLFW_KEY_X && action == GLFW_PRESS)
+	//{
+	//	ambientReflection = glm::max(0.0f, ambientReflection - 0.1f); // Scade valoarea
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
+	//	diffuseReflection += 0.1f; // Ajustați pasul cum doriți
+	//	if (diffuseReflection > 1.0f) {
+	//		diffuseReflection = 1.0f;
+	//	}
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
+	//	diffuseReflection -= 0.1f; // Ajustați pasul cum doriți
+	//	if (diffuseReflection < 0.0f) {
+	//		diffuseReflection = 0.0f;
+	//	}
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+	//	specularReflection += 0.1f; // Ajustați pasul cum doriți
+	//	if (specularReflection > 1.0f) {
+	//		specularReflection = 1.0f;
+	//	}
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
+	//	specularReflection -= 0.1f; // Ajustați pasul cum doriți
+	//	if (specularReflection < 0.0f) {
+	//		specularReflection = 0.0f;
+	//	}
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
+	//	specularExponent *= 2.0f;
+	//}
+	//if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS) {
+	//	specularExponent /= 2.0f;
+	//}
 }
 ///////////
 struct Bubble {
@@ -928,7 +928,26 @@ void processInput(GLFWwindow* window)
 		submarinePosition.y += 0.1f;
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 		submarinePosition.y -= 0.1f;
+	const float reflectionStep = 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+		ambientReflection = glm::clamp(ambientReflection + reflectionStep, 0.0f, 10.0f);
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+		ambientReflection = glm::clamp(ambientReflection - reflectionStep, 0.0f, 10.0f);
 
+	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
+		diffuseReflection = glm::clamp(diffuseReflection + reflectionStep, 0.0f, 10.0f);
+	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+		diffuseReflection = glm::clamp(diffuseReflection - reflectionStep, 0.0f, 10.0f);
+
+	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+		specularReflection = glm::clamp(specularReflection + reflectionStep, 0.0f, 10.0f);
+	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+		specularReflection = glm::clamp(specularReflection - reflectionStep, 0.0f, 10.0f);
+
+	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
+		specularExponent = glm::clamp(specularExponent * 2.0f, 2.0f, 64.0f);
+	if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS)
+		specularExponent = glm::clamp(specularExponent / 2.0f, 2.0f, 64.0f);
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
 		int width, height;
 		glfwGetWindowSize(window, &width, &height);

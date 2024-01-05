@@ -154,8 +154,12 @@
   <ItemGroup>
     <None Include="..\Shaders\Lamp.fs" />
     <None Include="..\Shaders\Lamp.vs" />
+    <None Include="..\Shaders\modelLoading.frag" />
+    <None Include="..\Shaders\modelLoading.vs" />
     <None Include="..\Shaders\PhongLight.fs" />
     <None Include="..\Shaders\PhongLight.vs" />
+    <None Include="..\Shaders\skybox.fs" />
+    <None Include="..\Shaders\skybox.vs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
