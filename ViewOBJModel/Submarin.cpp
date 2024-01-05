@@ -303,7 +303,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		ambientReflection = glm::min(1.0f, ambientReflection + 0.1f); // Crește valoarea
 	}
 
-	if (key == GLFW_KEY_X&& action == GLFW_PRESS)
+	if (key == GLFW_KEY_X && action == GLFW_PRESS)
 	{
 		ambientReflection = glm::max(0.0f, ambientReflection - 0.1f); // Scade valoarea
 	}
@@ -644,8 +644,8 @@ int main()
 	GLuint waterVAO, waterVBO;
 	initializeQuad(waterVAO, waterVBO);
 	// Create camera
-	float nearPlane = 0.1f;  
-	float farPlane = 100.0f;  
+	float nearPlane = 0.1f;
+	float farPlane = 100.0f;
 
 	pCamera = new Camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0, 0.0, 3.0));
 
@@ -733,8 +733,8 @@ int main()
 		// render the model
 		glm::mat4 submarinModel = glm::scale(glm::mat4(1.0), glm::vec3(.1f));
 
-		submarinModel = glm::rotate(submarinModel, glm::radians(submarineRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 		submarinModel = glm::translate(submarinModel, submarinePosition);
+		submarinModel = glm::rotate(submarinModel, glm::radians(submarineRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 
 		// Extract the updated position from the model matrix
 		glm::vec3 updatedSubmarinePosition = glm::vec3(submarinModel[3]);
@@ -851,7 +851,7 @@ int main()
 		glDepthFunc(GL_LEQUAL);  // Ensure skybox is drawn behind everything
 		skyboxShader.use();
 		skyboxShader.setMat4("projection", pCamera->GetProjectionMatrix());
-		skyboxShader.setMat4("view", glm::mat4(glm::mat3(pCamera->GetViewMatrix())));  
+		skyboxShader.setMat4("view", glm::mat4(glm::mat3(pCamera->GetViewMatrix())));
 
 		glBindVertexArray(waterVAO);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
@@ -910,15 +910,21 @@ void processInput(GLFWwindow* window)
 		pCamera->ProcessKeyboard(UP, (float)deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
 		pCamera->ProcessKeyboard(DOWN, (float)deltaTime);
-	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		submarinePosition.z += 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		submarinePosition.x += sin(glm::radians(submarineRotation.y)) * 0.1f;
+		submarinePosition.z += cos(glm::radians(submarineRotation.y)) * 0.1f;
+	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		submarinePosition.z -= 0.1f;
+	{
+		submarinePosition.x -= sin(glm::radians(submarineRotation.y)) * 0.1f;
+		submarinePosition.z -= cos(glm::radians(submarineRotation.y)) * 0.1f;
+	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		submarineRotation.y += 0.1f;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		submarineRotation.y -= 0.1f;
-	if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 		submarinePosition.y += 0.1f;
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 		submarinePosition.y -= 0.1f;
