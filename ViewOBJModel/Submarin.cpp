@@ -605,7 +605,7 @@ int main()
 	Shader lampShader((currentPath + "\\Shaders\\Lamp.vs").c_str(), (currentPath + "\\Shaders\\Lamp.fs").c_str());
 	/*Shader shadowMappingShader((currentPath + "\\Shaders\\ShadowM.vs").c_str(), (currentPath + "\\Shaders\\PhongLight.fs").c_str());
 	Shader shadowMappingDepthShader("ShadowMappingDepth.vs", "ShadowMappingDepth.fs");*/
-	Shader waterShader((currentPath + "\\Shaders\\water.vs").c_str(), (currentPath + "\\Shaders\\water.fs").c_str());
+	Shader skyboxShader((currentPath + "\\Shaders\\skybox.vs").c_str(), (currentPath + "\\Shaders\\skybox.fs").c_str());
 
 	std::string objFileName = (currentPath + "\\Models\\CylinderProject.obj");
 	Model objModel(objFileName, false);
@@ -704,9 +704,9 @@ int main()
 
 		//draw the water 
 		glDepthFunc(GL_LEQUAL);  // Ensure skybox is drawn behind everything
-		waterShader.use();
-		waterShader.setMat4("projection", pCamera->GetProjectionMatrix());
-		waterShader.setMat4("view", glm::mat4(glm::mat3(pCamera->GetViewMatrix())));  // Remove translation part of the view matrix
+		skyboxShader.use();
+		skyboxShader.setMat4("projection", pCamera->GetProjectionMatrix());
+		skyboxShader.setMat4("view", glm::mat4(glm::mat3(pCamera->GetViewMatrix())));  
 
 		glBindVertexArray(waterVAO);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
