@@ -1,4 +1,4 @@
-// ViewOBJModel.cpp : This file contains the 'main' function. Program execution begins and ends there.
+﻿// ViewOBJModel.cpp : This file contains the 'main' function. Program execution begins and ends there.
 #include <Windows.h>
 #include <locale>
 #include <codecvt>
@@ -31,8 +31,29 @@
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+float ambientReflection = 0.1f;
+float diffuseReflection = 0.5f;
+float specularReflection = 0.5f;
+int specularExponent = 2;
+
 glm::vec3 submarinePosition = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 submarineRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+
+bool followSubmarine = false;
+
+// Assuming you have Euler angles representing the submarine's orientation
+float submarineYaw;    // Yaw angle in radians
+float submarinePitch;  // Pitch angle in radians
+float submarineRoll;   // Roll angle in radians
+
+// Function to calculate the front vector based on Euler angles
+glm::vec3 CalculateFrontVector(float yaw, float pitch, float roll) {
+	glm::vec3 front;
+	front.x = cos(yaw) * cos(pitch);
+	front.y = sin(pitch);
+	front.z = sin(yaw) * cos(pitch);
+	return glm::normalize(front);
+}
 
 enum ECameraMovementType
 {
@@ -83,6 +104,11 @@ public:
 		bFirstMouseMove = true;
 
 		UpdateCameraVectors();
+	}
+
+	void SetPosition(const glm::vec3& position)
+	{
+		this->position = position;
 	}
 
 	void Reset(const int width, const int height)
@@ -193,7 +219,7 @@ private:
 		//std::cout << "yaw = " << yaw << std::endl;
 		//std::cout << "pitch = " << pitch << std::endl;
 
-		// Avem grij� s� nu ne d�m peste cap
+		// Avem grijã sã nu ne dãm peste cap
 		if (constrainPitch) {
 			if (pitch > 89.0f)
 				pitch = 89.0f;
@@ -201,7 +227,7 @@ private:
 				pitch = -89.0f;
 		}
 
-		// Se modific� vectorii camerei pe baza unghiurilor Euler
+		// Se modificã vectorii camerei pe baza unghiurilor Euler
 		UpdateCameraVectors();
 	}
 
@@ -251,6 +277,7 @@ void Cleanup()
 	delete pCamera;
 }
 
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -262,7 +289,53 @@ double lastFrame = 0.0f;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+	{
+		followSubmarine = false;
+	}
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+	{
+		followSubmarine = true;
+	}
+	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
+	{
+		ambientReflection = glm::min(1.0f, ambientReflection + 0.1f); // Crește valoarea
+	}
+
+	if (key == GLFW_KEY_X&& action == GLFW_PRESS)
+	{
+		ambientReflection = glm::max(0.0f, ambientReflection - 0.1f); // Scade valoarea
+	}
+	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
+		diffuseReflection += 0.1f; // Ajustați pasul cum doriți
+		if (diffuseReflection > 1.0f) {
+			diffuseReflection = 1.0f;
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
+		diffuseReflection -= 0.1f; // Ajustați pasul cum doriți
+		if (diffuseReflection < 0.0f) {
+			diffuseReflection = 0.0f;
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+		specularReflection += 0.1f; // Ajustați pasul cum doriți
+		if (specularReflection > 1.0f) {
+			specularReflection = 1.0f;
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
+		specularReflection -= 0.1f; // Ajustați pasul cum doriți
+		if (specularReflection < 0.0f) {
+			specularReflection = 0.0f;
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
+		specularExponent *= 2.0f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS) {
+		specularExponent /= 2.0f;
+	}
 }
 ///////////
 struct Bubble {
@@ -634,17 +707,8 @@ int main()
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		lightPos.x = 0.5 * cos(glfwGetTime());
-		lightPos.z = 0.5 * sin(glfwGetTime());
 
 		lightingShader.use();
-		lightingShader.SetVec3("objectColor", 1.0f, 0.5f, 0.5f);
-		lightingShader.SetVec3("lightColor", 1.0f, 0.5f, 0.5f);
-		lightingShader.SetVec3("lightPos", lightPos);
-		lightingShader.SetVec3("viewPos", pCamera->GetPosition());
-
-		lightingShader.setMat4("projection", pCamera->GetProjectionMatrix());
-		lightingShader.setMat4("view", pCamera->GetViewMatrix());
 
 		// Pass texture coordinates if the shader supports it
 		lightingShader.setBool("useTexture", true);
@@ -654,7 +718,49 @@ int main()
 
 		submarinModel = glm::rotate(submarinModel, glm::radians(submarineRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 		submarinModel = glm::translate(submarinModel, submarinePosition);
+
+		// Extract the updated position from the model matrix
+		glm::vec3 updatedSubmarinePosition = glm::vec3(submarinModel[3]);
+
+		//// Extract rotation matrix
+		//glm::mat3 rotationMatrix = glm::mat3(submarinModel);
+
+		//// Calculate pitch, yaw, and roll
+		//float pitch = asin(rotationMatrix[1][2]);  // arcsin of the second row, third column
+		//float yaw = atan2(-rotationMatrix[0][2], rotationMatrix[2][2]);  // arctan2 of the first row, third column and third row, third column
+		//float roll = atan2(-rotationMatrix[1][0], rotationMatrix[1][1]);  // arctan2 of the second row, first column and second row, second column
+
+		//// Convert angles to degrees if needed
+		//pitch = glm::degrees(pitch);
+		//yaw = glm::degrees(yaw);
+		//roll = glm::degrees(roll);
+
+		///*std::cout<<"pitch = "<<pitch<<std::endl;
+		//std::cout << "yaw = " << yaw << std::endl;
+		//std::cout << "roll = " << roll << std::endl;*/
+
+		////Submarine's front vector
+		//glm::vec3 submarineFront = CalculateFrontVector(submarineYaw, submarinePitch, submarineRoll);
+
+		//Update light position based on submarine position and rotation
+		lightPos = updatedSubmarinePosition + glm::vec3(0.0f, -0.18f, 0.0f);
+
+		//lightingShader.SetVec3("objectColor", 1.0f, 0.5f, 0.5f);
+		lightingShader.SetVec3("lightColor", 1.0f, 0.5f, 0.5f);
+		lightingShader.SetVec3("lightPos", lightPos);
+		lightingShader.SetVec3("viewPos", pCamera->GetPosition());
+
+		lightingShader.setFloat("ambientReflection", ambientReflection); // Actualizare constantă de reflexie ambientală
+		lightingShader.setFloat("diffuseReflection", diffuseReflection); // Actualizare constantă de reflexie difuză
+		lightingShader.setFloat("specularReflection", specularReflection); // Actualizare constantă de reflexie speculară
+		lightingShader.setInt("specularExponent", specularExponent); // Actualizare exponent specular
+
+		lightingShader.setMat4("projection", pCamera->GetProjectionMatrix());
+		lightingShader.setMat4("view", pCamera->GetViewMatrix());
+
 		lightingShader.setMat4("model", submarinModel);
+
+
 
 		std::string uniformName = "texture1";
 		lightingShader.setInt(uniformName.c_str(), 0);
