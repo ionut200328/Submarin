@@ -38,6 +38,7 @@ int specularExponent = 2;
 
 glm::vec3 submarinePosition = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 submarineRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 terrainPosition = glm::vec3(0.0f, 0.0f, -1.0f);
 
 bool followSubmarine = false;
 
@@ -664,15 +665,17 @@ int main()
 	/*Shader shadowMappingShader((currentPath + "\\Shaders\\ShadowM.vs").c_str(), (currentPath + "\\Shaders\\PhongLight.fs").c_str());
 	Shader shadowMappingDepthShader("ShadowMappingDepth.vs", "ShadowMappingDepth.fs");*/
 	Shader skyboxShader((currentPath + "\\Shaders\\skybox.vs").c_str(), (currentPath + "\\Shaders\\skybox.fs").c_str());
+	Shader shaderModel((currentPath + "\\Shaders\\modelLoading.vs").c_str(), (currentPath + "\\Shaders\\modelLoading.frag").c_str());
 
-	std::string objFileName = (currentPath + "\\Models\\CylinderProject.obj");
-	Model objModel(objFileName, false);
+	std::string terrainObj = (currentPath + "\\Models\\Terrain\\terrain.obj");
+	Model terrainObjModel(terrainObj, false);
 
 	std::string submarinObjFileName = (currentPath + "\\Models\\Submarin\\submarine.obj");
 	Model submarinObjModel(submarinObjFileName, false);
 
 	// render loop
 	std::vector<Texture> textures;
+	std::vector<Texture> terrain;
 
 	std::vector<std::string> texturePaths = {
 		currentPath + "\\Models\\Submarin\\AO_map.png",
@@ -689,10 +692,24 @@ int main()
 		currentPath + "\\Models\\Water\\Underwater Box_Back.jpg",
 		currentPath + "\\Models\\Water\\Underwater Box_Front.jpg"
 	};
+	std::vector<std::string> terrainTextures =
+	{
+		currentPath + "\\Models\\Terrain\\terrain1Color.old.png",
+		currentPath + "\\Models\\Terrain\\terrain1Color.png",
+		currentPath + "\\Models\\Terrain\\terrain1Cur.png",
+		currentPath + "\\Models\\Terrain\\terrain1Mettalic.png",
+		currentPath + "\\Models\\Terrain\\terrain1Normal.png",
+		currentPath + "\\Models\\Terrain\\terrain1Roughness.png",
+		currentPath + "\\Models\\Terrain\\terrain1Splatmap.png"
+	};
 	GLuint cubemapTexture = loadCubemap(skyboxFaces);
 	for (const auto& path : texturePaths) {
 		Texture texture = loadTexture(path.c_str());
 		textures.push_back(texture);
+	}
+	for (const auto& path : terrainTextures) {
+		Texture texture = loadTexture(path.c_str());
+		terrain.push_back(texture);
 	}
 	while (!glfwWindowShouldClose(window)) {
 		// per-frame time logic
@@ -780,6 +797,44 @@ int main()
 			glBindTexture(GL_TEXTURE_2D, textures[i].id);
 		}
 		submarinObjModel.Draw(lightingShader);
+
+		shaderModel.use();
+		shaderModel.SetVec3("objectColor", 194.0f / 255.0f, 178 / 255.0f, 128.0f / 255.0f);
+		shaderModel.SetVec3("lightColor", 194.0f / 255.0f, 178.0f / 255.0f, 128.0f / 255.0f);
+		shaderModel.SetVec3("lightPos", lightPos);
+		shaderModel.SetVec3("viewPos", pCamera->GetPosition());
+
+		shaderModel.setMat4("projection", pCamera->GetProjectionMatrix());
+		shaderModel.setMat4("view", pCamera->GetViewMatrix());
+
+		// Pass texture coordinates if the shader supports it
+		shaderModel.setBool("useTexture", true);
+		glm::mat4 terrainModel = glm::scale(glm::mat4(1.0), glm::vec3(.5f));
+
+		terrainModel = glm::translate(terrainModel, terrainPosition);
+		terrainModel = glm::scale(terrainModel, glm::vec3(0.1f));
+		shaderModel.setMat4("model", terrainModel);
+
+		uniformName = "texture1";
+		shaderModel.setInt(uniformName.c_str(), 7);
+		uniformName = "texture2";
+		shaderModel.setInt(uniformName.c_str(), 8);
+		uniformName = "texture3";
+		shaderModel.setInt(uniformName.c_str(), 9);
+		uniformName = "texture4";
+		shaderModel.setInt(uniformName.c_str(), 10);
+		uniformName = "texture5";
+		shaderModel.setInt(uniformName.c_str(), 11);
+		uniformName = "texture6";
+		shaderModel.setInt(uniformName.c_str(), 12);
+		uniformName = "texture7";
+		shaderModel.setInt(uniformName.c_str(), 13);
+		for (GLuint i = 0; i < terrain.size(); ++i) {
+			glActiveTexture(GL_TEXTURE0 + terrain[i].id);  // Activate texture unit GL_TEXTURE0 + i
+			glBindTexture(GL_TEXTURE_2D, terrain[i].id);
+		}
+		terrainObjModel.Draw(shaderModel);
+
 
 		// also draw the lamp object
 		lampShader.use();
