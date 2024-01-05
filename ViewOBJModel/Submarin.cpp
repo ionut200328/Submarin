@@ -279,6 +279,79 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		submarineRotation.y += 1.1f;
 	}
 }
+///////////
+struct Bubble {
+	glm::vec3 position;  // Bubble's position
+	float size;          // Bubble's size
+	float speed;         // Speed of the bubble
+
+	// Constructor to initialize a bubble
+	Bubble(glm::vec3 pos, float s, float sp) : position(pos), size(s), speed(sp) {}
+};
+
+// Vector to hold bubbles
+std::vector<Bubble> bubbles;
+
+// Function to create new bubbles
+void createBubble() {
+	// Generate random position, size, and speed for the bubble
+	float x = static_cast<float>(rand() % 100) / 50 - 1.0f; // Random X position between -1 and 1
+	float z = static_cast<float>(rand() % 100) / 50 - 1.0f; // Random Z position between -1 and 1
+	glm::vec3 position(x, -1.0f, z);  // Start bubbles at the bottom of the screen
+	float size = static_cast<float>(rand() % 10) / 100 + 0.05f; // Random size between 0.05 and 0.15
+	float speed = static_cast<float>(rand() % 10) / 100 + 0.01f; // Random speed between 0.01 and 0.1
+
+	// Create and add a new bubble to the vector
+	Bubble bubble(position, size, speed);
+	bubbles.push_back(bubble);
+}
+
+// Function to update bubble positions
+void updateBubbles() {
+	for (auto& bubble : bubbles) {
+		// Move the bubble upwards
+		bubble.position.y += bubble.speed;
+
+		// Reset position if the bubble reaches the top
+		if (bubble.position.y > 1.0f) {
+			bubble.position.y = -1.0f; // Start again from the bottom
+		}
+	}
+}
+void renderBubbles() {
+	// Begin rendering particles
+	// Set up particle rendering properties (e.g., color, size, blending) in your OpenGL setup
+
+	// Render each bubble as a particle
+	for (const auto& bubble : bubbles) {
+		// For each bubble, render a particle at its position
+		// Draw a particle at 'bubble.position' with 'bubble.size'
+		// Adjust colors, sizes, and shapes as needed
+		// Example using OpenGL for rendering particles:
+		glPushMatrix();
+		glTranslatef(bubble.position.x, bubble.position.y, bubble.position.z);
+		glColor3f(1.0f, 1.0f, 1.0f); // White color for the bubble
+
+		// Render the bubble as a simple quad or point (you may use a texture or a simple shape)
+		glBegin(GL_QUADS);
+		glVertex2f(-bubble.size, -bubble.size);
+		glVertex2f(bubble.size, -bubble.size);
+		glVertex2f(bubble.size, bubble.size);
+		glVertex2f(-bubble.size, bubble.size);
+		glEnd();
+
+		glPopMatrix();
+	}
+	GLenum err;
+	while ((err = glGetError()) != GL_NO_ERROR) {
+		// Log or print the OpenGL error code for debugging
+		std::cout << "OpenGL error: " << err << std::endl;
+	}
+
+	// End rendering particles
+	// Reset rendering properties if needed
+}
+///////////
 Texture loadTexture(const char* path) {
 	Texture texture;
 	texture.path = path;
@@ -649,7 +722,15 @@ int main()
 		// Unbind the VAO
 		glBindVertexArray(0);
 
+		if (rand() % 100 == 0) {
+			createBubble();
+		}
 
+		// Update bubble positions
+		updateBubbles();
+
+		// Render bubbles
+		/*renderBubbles();*/
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
