@@ -262,22 +262,7 @@ double lastFrame = 0.0f;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-		// Move submarine upwards
-		submarinePosition.z += 1.1f;
-	}
-	else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-		// Move submarine downwards
-		submarinePosition.z -= 1.1f;
-	}
-	else if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-		// Move submarine leftwards
-		submarineRotation.y -= 1.1f;
-	}
-	else if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-		// Move submarine rightwards
-		submarineRotation.y += 1.1f;
-	}
+	
 }
 ///////////
 struct Bubble {
@@ -665,11 +650,10 @@ int main()
 		lightingShader.setBool("useTexture", true);
 
 		// render the model
-		glm::mat4 submarinModel = glm::scale(glm::mat4(1.0), glm::vec3(.5f));
+		glm::mat4 submarinModel = glm::scale(glm::mat4(1.0), glm::vec3(.1f));
 
-		submarinModel = glm::translate(submarinModel, submarinePosition);
 		submarinModel = glm::rotate(submarinModel, glm::radians(submarineRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-		submarinModel= glm::scale(submarinModel, glm::vec3(0.1f));
+		submarinModel = glm::translate(submarinModel, submarinePosition);
 		lightingShader.setMat4("model", submarinModel);
 
 		std::string uniformName = "texture1";
@@ -765,6 +749,18 @@ void processInput(GLFWwindow* window)
 		pCamera->ProcessKeyboard(UP, (float)deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
 		pCamera->ProcessKeyboard(DOWN, (float)deltaTime);
+	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		submarinePosition.z += 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		submarinePosition.z -= 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		submarineRotation.y += 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		submarineRotation.y -= 0.1f;
+	if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		submarinePosition.y += 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		submarinePosition.y -= 0.1f;
 
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
 		int width, height;
